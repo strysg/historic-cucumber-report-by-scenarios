@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- Meta, title, CSS, favicons, etc. -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-control" content="public">
+  <title>
+    Historic Cucumber Scenario runs report file
+  </title>
+  <!-- Custom Theme Style -->
+  <style type="text/css">
+    body {
+      color: #393F44;
+      background: #ece6ea;
+      font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+      margin: 25px;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.471;
+    }
+
+    .main_container {
+      padding: 10px 20px 0;
+    }
+
+    i span {
+      display: none;
+    }
+
+    /* Table */
+    table {
+      width: 850px;
+      padding: 1px;
+      margin-top: 30px;
+      border-bottom: 1px solid;
+      border-color: #84a6bb;
+    }
+
+    th,
+    td {
+      border-right: 1px solid;
+      border-color: #84a6bb;
+    }
+
+    tr:nth-child(odd) {
+      background-color: #eee;
+    }
+
+    tr:nth-child(even) {
+      color: #eee;
+      background-color: #3a4e59;
+    }
+
+    tr:nth-child(even) code {
+      font-size: 9.5px;
+      font-family: monospace;
+      color: #ddd;
+      line-height: 1.2em;
+      page-break-inside: avoid;
+      word-wrap: break-word;
+      overflow-x: auto;
+    }
+
+    tr:nth-child(even) a {
+      color: #8992FF;
+    }
+
+    code {
+      font-size: 9.5px;
+      font-family: monospace;
+      color: #2e404d;
+      line-height: 1.2em;
+      page-break-inside: avoid;
+      word-wrap: break-word;
+      overflow-x: auto;
+    }
+
+    pre {
+      font-size: 9.5px;
+      font-family: monospace;
+      white-space: -moz-pre-wrap;
+      /* Mozilla, supported since 1999 */
+      white-space: -pre-wrap;
+      /* Opera */
+      white-space: -o-pre-wrap;
+      /* Opera */
+      white-space: pre-wrap;
+      /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+      word-wrap: break-word;
+      /* IE 5.5+ */
+    }
+
+    .tc_detail {
+      font-size: 11.5px;
+    }
+
+    .meter {
+      height: 20px;
+      position: relative;
+      background: #E74C3C;
+      box-shadow: inset 0 -1px 1px rgba(255, 255, 255, 0.3);
+      max-width: 450px;
+    }
+
+    .meter>span {
+      display: block;
+      height: 100%;
+      background-color: #1ABB9C;
+      background-image: linear-gradient(center bottom,
+          rgb(26, 187, 134) 37%,
+          rgb(45, 215, 159) 69%);
+      box-shadow:
+        inset 0 2px 9px rgba(255, 255, 255, 0.3),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* colors */
+    .ambiguous-color {
+      color: #E74C3C !important;
+    }
+
+    .failed-color {
+      color: #E74C3C !important;
+    }
+
+    .not-defined-color {
+      color: #F39C12 !important;
+    }
+
+    .passed-color {
+      color: #1ABB9C !important;
+    }
+
+    .pending-color {
+      color: #FFD119 !important;
+    }
+
+    .skipped-color {
+      color: #3498DB !important;
+    }
+
+    /* backgrounds */
+    .ambiguous-background {
+      background: #b73122 !important;
+    }
+
+    .failed-background {
+      background: #E74C3C !important;
+    }
+
+    .not-defined-background {
+      background: #F39C12 !important;
+    }
+
+    .passed-background {
+      background: #1ABB9C !important;
+    }
+
+    .pending-background {
+      background: #FFD119 !important;
+    }
+
+    .skipped-background {
+      background: #3498DB !important;
+    }
+  </style>
+</head>
+
+<!--
+    Expects the following variables:
+
+    rs: Array of reports summaries with format:
+    [
+        {  
+            dateTime: 'dd-mm-yyyy hh:mm:ss',
+            failedCount, passedCount, skippedCount
+        }, ...
+    ]
+
+    scenarios: Object of all scenarios grouped by scenario Name, format
+    {'<scenarioName>': {
+        name: '<scenarioName>',
+        numberOfExecutions: <numberOfTotalExecutions>,
+        failures: <numberOfFailures>,
+        passed: <numberOfPasses>,
+        skipped: <numberOfSkipped>,
+        executions: [{
+            dateTime: '<dateInFormat dd-mm-yyy hh:mm:ss>',
+            id: '<id>',
+            status: '<status>',
+            tags: [<tag1>, <tag2>, ...],
+            steps: [{
+                name: <stepName>,
+                status: <stepStatus>,
+                duration: <stepDuration>,
+                error: '<errorDetail>',
+                location: '<stepLocation>'
+            }, ...]
+        },...
+    },
+-->
+
+<!-- TODO: Modify-->
+<body>
+  <div>Below are the results from '<%= service %>' Automation Testing Partial Run on</div>
+    <strong>
+      <%= date %>
+    </strong>
+  </div>
+  <div>Pipeline Execution Trends on
+    <a href="<%= dashboardUrl %>" target="_blank">
+      <% service %> Pipeline Execution Dashboard
+    </a>
+  </div>
+
+  <h2>
+        Historic Cucumber Scenario runs report file. 
+        <%= title %>
+  </h2>
+  <h5>Number of files: <%= rs.length %></h4>
+  <h5>From: <%= minReportDate %>, to <%= maxReportDate %></h4>
+
+  <!-- <div>
+    <img src="data:image/png;base64,<%= imageB64 %>" alt="" />
+  </div> -->
+
+  <!-- Summary of reports -->
+  <div>
+    <% for (let i=0; i<rs.length; i++) { %>
+        <details>
+            <summary>
+                <p style="font-size: 11px; display: inline">rs[i].date &nbsp;&nbsp;
+                    (<strong><%= rs[i].passedCount + rs[i].failedCount + rs[i].skippedCount %> executed</strong>) ⇲</p>
+            </summary>
+            <ul>
+                <li>
+                <div><strong>Passed</strong>: <span class="passed-color">
+                    <strong><%= rs[i].passedCount %></strong>
+                    &nbsp;&nbsp;&nbsp;
+                    <!-- total executions-->
+                    (<%= parseInt(parseFloat((rs[i].rs[i].passedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
+                    </span>
+                </div>
+                </li>
+                <li>
+                <div><strong>Failed</strong>:
+                    <span class="failed-color">
+                    <strong><%= rs[i].failedCount %></strong>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    (<%= parseInt(parseFloat((rs[i].failedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
+                    </span>
+                </div>
+                </li>
+                <li>
+                <div><strong>Skipped</strong>:
+                    <span class="skipped-color">
+                    <strong><%= rs[i].skippedCount %></strong>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    (<%= parseInt(parseFloat((rs[i].skippedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
+                    </span>
+                </div>
+                </li>
+            </ul>
+  
+        </details>
+    <% } %>
+  </div>
+
+  <div class="meter">
+    <span style="width: <%= (passedCount*100)/(passedCount+failedCount+skippedCount) %>%;"></span>
+  </div>
+
+  <% for (let i=0; i < scenarios.length; i++) { %>
+    <details>
+      <summary>
+        <%= index %>:           
+        Feature: <%= scenarios[index]['feature'] %> <br>
+        <% if (scenarios[index]['failed'] === true ) { %>
+          <span class="failed-color">
+            (failed ❌)
+        <% } else if (scenarios[index]['skipped'] === true ) { %>
+          <span class="skipped-color">
+            (skipped ↝)
+        <% } else { %>
+          <span class="passed-color">
+            (passed ✅)
+        <% } %>
+          <%= scenarios[index]['name'] %>
+          </span>
+        <p style="font-size: 13px; display: inline">
+          Details ⤵
+        </p>
+      </summary>
+        <table>
+          <tr>
+            <th colspan="4">
+              Feature: <%= scenarios[index]['feature'] %> <br>
+              Scenario: 
+              <% if (scenarios[index]['failed'] === true ) { %>
+                (❌ failed)
+                <span class="failed-color">
+              <% } else if (scenarios[index]['skipped'] === true ) { %>
+                (↝ skipped)
+                <span class="skipped-color">
+              <% } else { %>
+                <span class="passed-color">
+              <% } %>
+                (✅ passed)
+                <%= scenarios[index]['name'] %>
+              </span>
+            </th>
+          </tr>
+          <tr>
+            <td colspan="4">Tags:
+              <strong>
+              <% for (let indexTag=0; indexTag < scenarios[index]['tags'].length; indexTag++) { %>
+                <%= scenarios[index]['tags'][indexTag]['name'] %>
+              <% } %> &nbsp;
+              </strong>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="=4">
+              Associated Bugs:
+              <% if (scenarios[index]['bugTags'].length > 0) { %>
+                <% for (let bindex=0; bindex < scenarios[index]['bugTags'].length; bindex++) { %>
+                <a target="_blank" href="<%= scenarios[index]['bugTags'][bindex]['url'] %>">
+                  #<%= scenarios[index]['bugTags'][bindex]['name'] %>
+                </a> &nbsp;
+                <% } %>
+              <% } else { %>
+                Not found.
+              <% } %>          
+            </td>
+          </tr>
+          <tr>
+            <th>Step</th>
+            <th>Status</th>
+            <th>Duration</th>
+          </tr>
+          <tr>
+            <% for (let stepIndex=0; stepIndex < scenarios[index].steps.length; stepIndex++) { %>
+              <td>
+                <%= scenarios[index].steps[stepIndex]['name'] %>
+                <%= scenarios[index].steps[stepIndex]['name'] %>
+              </td>
+              <td>
+                <% if (scenarios[index].steps[stepIndex]['status']==='FAILED') { %>
+                  <span class="failed-color">
+                <% } else if (scenarios[index].steps[stepIndex]['status']=='SKIPPED') { %>
+                    <span class="skipped-color">
+                  <% } else if (scenarios[index].steps[stepIndex]['status']=='PASSED') { %>
+                    <span class="passed-color">
+                  <% } %>
+                  <%= scenarios[index].steps[stepIndex]['status'] %>
+                  </span>
+              </td>
+              <td>
+                <% if (scenarios[index].steps[stepIndex]['status']!=='SKIPPED') { %>
+                  <%= (scenarios[index].steps[stepIndex]['duration'] / 100000).toFixed(3) %> ms.
+                  <i>
+                  <%= (scenarios[index].steps[stepIndex]['duration'] / 100000000).toFixed(3) %> s.
+                  </i>
+                <% } %>
+              </td>
+            </tr>
+          <tr>
+              <% if (scenarios[index].steps[stepIndex]['error'] !== null) { %>
+                <td colspan="4">
+                  <details>
+                    <summary>
+                      <p style="font-size: 11px; display: inline">Error detail: ⤵</p>
+                    </summary>
+                    <pre><%= scenarios[index].steps[stepIndex]['error'] %></pre>
+                  </details>
+                </td>
+              <% } %>
+            </tr>
+          <% } %>
+        </table>
+      </details>
+  <% } %>
+
+</body>
+
+</html>

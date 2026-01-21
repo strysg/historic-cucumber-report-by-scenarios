@@ -1,0 +1,19 @@
+{
+  "name": "cucumber-report-historic-scenarios",
+  "version": "1.0.0",
+  "description": "A report generator cucumber_report.json files which creates a report with historic runs for each scenario name.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run report"
+  },
+  "keywords": [
+    "cucumber",
+    "report"
+  ],
+  "author": "Rodrigo Garcia",
+  "license": "MIT",
+  "devDependencies": {
+    "ejs": "^4.0.1",
+    "luxon": "^3.7.2"
+  }
+}
