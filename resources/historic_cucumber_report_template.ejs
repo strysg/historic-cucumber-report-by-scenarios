@@ -236,31 +236,35 @@
 
   <!-- Summary of reports -->
   <div>
-    <h2>Summary of report files</h2>
-    <ol>
-    <% for (var rn in rs) { %>
-      <li style="font-size: 11px;">
-        <strong><%= rn %></strong>
-        scenarios: <strong><%= rs[rn].total %></strong>
-        &nbsp;&nbsp; passed: 
-        <span class="passed-color">
-          <strong><%= rs[rn]['passed'] %></strong>
-          <!-- total executions-->
-          (<%= parseInt(parseFloat((rs[rn].passed*100)/(rs[rn].total)).toFixed(1)) %>%)
-        </span>
-        &nbsp;&nbsp; failed:
-        <span class="failed-color">
-            <strong><%= rs[rn]['failed'] %></strong>
-            (<%= parseInt(parseFloat((rs[rn].failed*100)/(rs[rn].total)).toFixed(1)) %>%)
-        </span>
-        &nbsp;&nbsp; skipped:
-        <span class="skipped-color">
-          <strong><%= rs[rn]['skipped'] %></strong>
-          (<%= parseInt(parseFloat((rs[rn].skipped*100)/(rs[rn].total)).toFixed(1)) %>%)
-        </span>
-      </li>
-    <% } %>
-    </ol>
+    <details>
+      <summary>
+        <h2>Summary of report files</h2> (show ⤵)
+      </summary>
+        <ol>
+        <% for (var rn in rs) { %>
+          <li style="font-size: 11px;">
+            <strong><%= rn %></strong>
+            scenarios: <strong><%= rs[rn].total %></strong>
+            &nbsp;&nbsp; passed: 
+            <span class="passed-color">
+              <strong><%= rs[rn]['passed'] %></strong>
+              <!-- total executions-->
+              (<%= parseInt(parseFloat((rs[rn].passed*100)/(rs[rn].total)).toFixed(1)) %>%)
+            </span>
+            &nbsp;&nbsp; failed:
+            <span class="failed-color">
+                <strong><%= rs[rn]['failed'] %></strong>
+                (<%= parseInt(parseFloat((rs[rn].failed*100)/(rs[rn].total)).toFixed(1)) %>%)
+            </span>
+            &nbsp;&nbsp; skipped:
+            <span class="skipped-color">
+              <strong><%= rs[rn]['skipped'] %></strong>
+              (<%= parseInt(parseFloat((rs[rn].skipped*100)/(rs[rn].total)).toFixed(1)) %>%)
+            </span>
+          </li>
+        <% } %>
+        </ol>
+    </details>
   </div>
 
   <h2>Scenario Executions</h2>
@@ -269,8 +273,8 @@
   <% for (var sn in scenarios) { %>
     <details>
       <summary>
-        <strong><%= sn %></strong> 
-        <br>
+        <big><strong><%= sn %></strong></big> 
+         ⎼ 
         <span class="passed-color">✅: <%= scenarios[sn].passed %></span>,
         <span class="failed-color">❌: <%= scenarios[sn].failures %></span>,
         <span class="skipped-color">❔: <%= scenarios[sn].skipped %></span>,
