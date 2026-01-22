@@ -15,6 +15,7 @@
   "author": "Rodrigo Garcia",
   "license": "MIT",
   "devDependencies": {
+    "commander": "^14.0.2",
     "ejs": "^4.0.1",
     "luxon": "^3.7.2"
   }
