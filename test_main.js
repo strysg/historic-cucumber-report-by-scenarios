@@ -2,8 +2,8 @@
  * This is part of cucumber-report-historic-scenarios 
  */
 
-const { generateHtml } = require('./index');
-0
+import { generateHtml } from './index.js';
+
 function main () {
     generateHtml('/home/rodrigo.garcia/jala/SES/sesbustersjs/reports/json/historic');
 }

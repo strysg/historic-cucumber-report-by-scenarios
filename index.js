@@ -2,33 +2,61 @@
  * This is part of cucumber-report-historic-scenarios 
  */
 
-import { getReportFilesList } from './lib/utils.js';
+import { getFileDateFromName, getReportFilesList, readFileSync } from './lib/utils.js';
 import { getScenariosFromReportJson, groupScenariosByName } from './lib/generator.js';
 import path from 'path';
-
-
-// const { getReportFilesList } = require('./lib/utils');
-// const { getScenariosFromReportJson, groupScenariosByName } = require('./lib/generator');
+import fs from 'fs';
+import { DateTime } from 'luxon';
+import ejs from 'ejs';
 
 /**
  * Generates an html report file 
- * @param {*} reportsPath 
- * @param {*} outputFile 
+ * @param {*} reportsPath - Directory path where to look for cucumber-report.json files 
+ * @param {*} outputFile - File path where to save the html
+ * @param {*} templateFile - File path to use as ejs template to generate the report
+ * @param {*} maxRecentFiles - Max number of most recent files to read. Default 0 to read all files
  */
-function generateHtml(reportsPath = './reports', outputFile = './historic-reports-by-scenario.html') {
+function generateHtml(reportsPath = './reports', 
+    outputFile = './historic-reports-by-scenario.html',
+    templateFile = './resources/historic_cucumber_report_template.ejs',
+    maxRecentFiles = 0
+) {
     const reportFiles = getReportFilesList(reportsPath);
-    console.log('----- report files');
-    console.log(reportFiles);
 
     const reports = [];
+    const dateTimeOfFiles = [];
     for (const reportFile of reportFiles) {
         const scenarioReport = getScenariosFromReportJson(path.join(reportsPath, reportFile));
         reports.push(scenarioReport);
+        dateTimeOfFiles.push(getFileDateFromName(reportFile));
     }
-    const groupedScenarios = groupScenariosByName(reports);
-    console.log(groupedScenarios);
+    const groupedScenarios = groupScenariosByName(reports.map((report) => report.scenarios));
+    // console.log(groupedScenarios);
 
-    // TODO: read ejs, replace and save file.
+    const rs = {};
+    for (const report of reports) {
+        rs[`${report.summary.reportFilename}`] = report.summary;
+    }
+
+    const dataToEjs = {
+        date: DateTime.now().toUTC().toISO(),
+        summary: {
+            totalFiles: reportFiles.length,
+            totalScenarios: Object.keys(groupedScenarios).length,
+            minReportDate: dateTimeOfFiles.sort((a, b) => a - b)[0],
+            maxReportDate: dateTimeOfFiles.sort((a, b) => a - b)[dateTimeOfFiles.length - 1]
+        },
+        rs,
+        scenarios: groupedScenarios
+    };
+
+    console.log(dataToEjs);
+
+    // reading ejs template
+    const htmlTemplate = readFileSync(templateFile);
+    const html = ejs.render(htmlTemplate, dataToEjs);
+    console.log(`Generating historic report file per scenarios to ${outputFile}`);
+    fs.writeFileSync(outputFile, html);
 }
 
 export { generateHtml };

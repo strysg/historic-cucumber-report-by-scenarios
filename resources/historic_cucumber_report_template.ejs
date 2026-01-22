@@ -98,6 +98,10 @@
       font-size: 11.5px;
     }
 
+    .scenario_detail {
+      margin-left: 2em;
+    }
+
     .meter {
       height: 20px;
       position: relative;
@@ -175,13 +179,23 @@
 <!--
     Expects the following variables:
 
-    rs: Array of reports summaries with format:
-    [
-        {  
-            dateTime: 'dd-mm-yyyy hh:mm:ss',
-            failedCount, passedCount, skippedCount
-        }, ...
-    ]
+    date: <currentDateTime>
+    
+    summary: {
+      totalFiles: <numberOfFiles>,
+      totalScenarios: <numberOfScenarios>,
+      minReportDate: <minReportDate>,
+      maxReportDate: <maxReportDate Or Today>,
+    },
+
+    rs: {
+      '<reportFileName>': {
+        total: totalScenarios,
+        passed: <passedCount>,
+        failed: <failedCount>,
+        skipped: <skippedCount>
+      }
+    },
 
     scenarios: Object of all scenarios grouped by scenario Name, format
     {'<scenarioName>': {
@@ -208,183 +222,143 @@
 
 <!-- TODO: Modify-->
 <body>
-  <div>Below are the results from '<%= service %>' Automation Testing Partial Run on</div>
-    <strong>
-      <%= date %>
-    </strong>
-  </div>
-  <div>Pipeline Execution Trends on
-    <a href="<%= dashboardUrl %>" target="_blank">
-      <% service %> Pipeline Execution Dashboard
-    </a>
-  </div>
-
   <h2>
-        Historic Cucumber Scenario runs report file. 
-        <%= title %>
+        Historic Cucumber Scenario runs report.
+        <strong>
+        (<%= date %>)
+        </strong>
   </h2>
-  <h5>Number of files: <%= rs.length %></h4>
-  <h5>From: <%= minReportDate %>, to <%= maxReportDate %></h4>
-
-  <!-- <div>
-    <img src="data:image/png;base64,<%= imageB64 %>" alt="" />
-  </div> -->
+  <ul>
+    <li>Total report files: <%= summary.totalFiles %></li>
+    <li>From <%= summary.minReportDate %> - <%= summary.maxReportDate %> and current report.</li>
+    <li>Total Scenarios: <%= summary.totalScenarios %></li>
+  </ul>
 
   <!-- Summary of reports -->
   <div>
-    <% for (let i=0; i<rs.length; i++) { %>
-        <details>
-            <summary>
-                <p style="font-size: 11px; display: inline">rs[i].date &nbsp;&nbsp;
-                    (<strong><%= rs[i].passedCount + rs[i].failedCount + rs[i].skippedCount %> executed</strong>) ⇲</p>
-            </summary>
-            <ul>
-                <li>
-                <div><strong>Passed</strong>: <span class="passed-color">
-                    <strong><%= rs[i].passedCount %></strong>
-                    &nbsp;&nbsp;&nbsp;
-                    <!-- total executions-->
-                    (<%= parseInt(parseFloat((rs[i].rs[i].passedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
-                    </span>
-                </div>
-                </li>
-                <li>
-                <div><strong>Failed</strong>:
-                    <span class="failed-color">
-                    <strong><%= rs[i].failedCount %></strong>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    (<%= parseInt(parseFloat((rs[i].failedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
-                    </span>
-                </div>
-                </li>
-                <li>
-                <div><strong>Skipped</strong>:
-                    <span class="skipped-color">
-                    <strong><%= rs[i].skippedCount %></strong>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    (<%= parseInt(parseFloat((rs[i].skippedCount*100)/(rs[i].rs[i].passedCount+rs[i].failedCount+rs[i].skippedCount)).toFixed(1)) %>%)
-                    </span>
-                </div>
-                </li>
-            </ul>
-  
-        </details>
+    <h2>Summary of report files</h2>
+    <ol>
+    <% for (var rn in rs) { %>
+      <li style="font-size: 11px;">
+        <strong><%= rn %></strong>
+        scenarios: <strong><%= rs[rn].total %></strong>
+        &nbsp;&nbsp; passed: 
+        <span class="passed-color">
+          <strong><%= rs[rn]['passed'] %></strong>
+          <!-- total executions-->
+          (<%= parseInt(parseFloat((rs[rn].passed*100)/(rs[rn].total)).toFixed(1)) %>%)
+        </span>
+        &nbsp;&nbsp; failed:
+        <span class="failed-color">
+            <strong><%= rs[rn]['failed'] %></strong>
+            (<%= parseInt(parseFloat((rs[rn].failed*100)/(rs[rn].total)).toFixed(1)) %>%)
+        </span>
+        &nbsp;&nbsp; skipped:
+        <span class="skipped-color">
+          <strong><%= rs[rn]['skipped'] %></strong>
+          (<%= parseInt(parseFloat((rs[rn].skipped*100)/(rs[rn].total)).toFixed(1)) %>%)
+        </span>
+      </li>
     <% } %>
+    </ol>
   </div>
 
-  <div class="meter">
-    <span style="width: <%= (passedCount*100)/(passedCount+failedCount+skippedCount) %>%;"></span>
-  </div>
+  <h2>Scenario Executions</h2>
 
-  <% for (let i=0; i < scenarios.length; i++) { %>
+  <!-- Each scenario -->
+  <% for (var sn in scenarios) { %>
     <details>
       <summary>
-        <%= index %>:           
-        Feature: <%= scenarios[index]['feature'] %> <br>
-        <% if (scenarios[index]['failed'] === true ) { %>
-          <span class="failed-color">
-            (failed ❌)
-        <% } else if (scenarios[index]['skipped'] === true ) { %>
-          <span class="skipped-color">
-            (skipped ↝)
-        <% } else { %>
-          <span class="passed-color">
-            (passed ✅)
-        <% } %>
-          <%= scenarios[index]['name'] %>
-          </span>
+        <strong><%= sn %></strong> 
+        <br>
+        <span class="passed-color">✅: <%= scenarios[sn].passed %></span>,
+        <span class="failed-color">❌: <%= scenarios[sn].failures %></span>,
+        <span class="skipped-color">❔: <%= scenarios[sn].skipped %></span>,
+        🚀: <strong><%= scenarios[sn].numberOfExecutions %></strong> - <i><%= scenarios[sn].id %></i>
         <p style="font-size: 13px; display: inline">
           Details ⤵
         </p>
       </summary>
-        <table>
-          <tr>
-            <th colspan="4">
-              Feature: <%= scenarios[index]['feature'] %> <br>
-              Scenario: 
-              <% if (scenarios[index]['failed'] === true ) { %>
-                (❌ failed)
+        <!-- Each execution of scenario -->
+        <% for (let i=0; i<scenarios[sn].executions.length; i++ ) { %>
+          <details style="margin-left: 1em;">
+            <summary>
+              <%= scenarios[sn].executions[i].dateTime %> 
+              <% if (scenarios[sn].executions[i]['status'] === 'failed') { %>
                 <span class="failed-color">
-              <% } else if (scenarios[index]['skipped'] === true ) { %>
-                (↝ skipped)
+                  (failed ❌)
+              <% } else if (scenarios[sn].executions[i]['skipped'] === 'failed') { %>
                 <span class="skipped-color">
+                  (skipped ↝)
               <% } else { %>
                 <span class="passed-color">
+                  (passed ✅)
               <% } %>
-                (✅ passed)
-                <%= scenarios[index]['name'] %>
-              </span>
-            </th>
-          </tr>
-          <tr>
-            <td colspan="4">Tags:
-              <strong>
-              <% for (let indexTag=0; indexTag < scenarios[index]['tags'].length; indexTag++) { %>
-                <%= scenarios[index]['tags'][indexTag]['name'] %>
-              <% } %> &nbsp;
-              </strong>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="=4">
-              Associated Bugs:
-              <% if (scenarios[index]['bugTags'].length > 0) { %>
-                <% for (let bindex=0; bindex < scenarios[index]['bugTags'].length; bindex++) { %>
-                <a target="_blank" href="<%= scenarios[index]['bugTags'][bindex]['url'] %>">
-                  #<%= scenarios[index]['bugTags'][bindex]['name'] %>
-                </a> &nbsp;
-                <% } %>
-              <% } else { %>
-                Not found.
-              <% } %>          
-            </td>
-          </tr>
-          <tr>
-            <th>Step</th>
-            <th>Status</th>
-            <th>Duration</th>
-          </tr>
-          <tr>
-            <% for (let stepIndex=0; stepIndex < scenarios[index].steps.length; stepIndex++) { %>
-              <td>
-                <%= scenarios[index].steps[stepIndex]['name'] %>
-                <%= scenarios[index].steps[stepIndex]['name'] %>
-              </td>
-              <td>
-                <% if (scenarios[index].steps[stepIndex]['status']==='FAILED') { %>
-                  <span class="failed-color">
-                <% } else if (scenarios[index].steps[stepIndex]['status']=='SKIPPED') { %>
-                    <span class="skipped-color">
-                  <% } else if (scenarios[index].steps[stepIndex]['status']=='PASSED') { %>
-                    <span class="passed-color">
-                  <% } %>
-                  <%= scenarios[index].steps[stepIndex]['status'] %>
-                  </span>
-              </td>
-              <td>
-                <% if (scenarios[index].steps[stepIndex]['status']!=='SKIPPED') { %>
-                  <%= (scenarios[index].steps[stepIndex]['duration'] / 100000).toFixed(3) %> ms.
-                  <i>
-                  <%= (scenarios[index].steps[stepIndex]['duration'] / 100000000).toFixed(3) %> s.
-                  </i>
-                <% } %>
-              </td>
-            </tr>
-          <tr>
-              <% if (scenarios[index].steps[stepIndex]['error'] !== null) { %>
-                <td colspan="4">
-                  <details>
-                    <summary>
-                      <p style="font-size: 11px; display: inline">Error detail: ⤵</p>
-                    </summary>
-                    <pre><%= scenarios[index].steps[stepIndex]['error'] %></pre>
-                  </details>
+              <% scenarios[sn].executions[i]['dateTime'] %>
+              <strong>⤵ </strong>
+            </summary>
+            <div class="scenario_detail">
+              <!-- steps of scenario -->
+              <table>
+              <tr>
+                <td colspan="4">Tags:
+                  <strong>
+                  <% for (let indexTag=0; indexTag < scenarios[sn].executions[i]['tags'].length; indexTag++) { %>
+                    <%= scenarios[sn].executions[i]['tags'][indexTag] %>
+                  <% } %> &nbsp;
+                  </strong>
                 </td>
+              </tr>
+              <%# TODO: Add Bug Tags display  %>
+              <tr>
+                <th>Step</th>
+                <th>Status</th>
+                <th>Duration</th>
+              </tr>
+              <tr>
+                <% for (let stepIndex=0; stepIndex < scenarios[sn].executions[i].steps.length; stepIndex++) { %>
+                  <td>
+                    <%= scenarios[sn].executions[i].steps[stepIndex]['name'] %>
+                    <%= scenarios[sn].executions[i].steps[stepIndex]['name'] %>
+                  </td>
+                  <td>
+                    <% if (scenarios[sn].executions[i].steps[stepIndex]['status']==='failed') { %>
+                      <span class="failed-color">
+                    <% } else if (scenarios[sn].executions[i].steps[stepIndex]['status']=='skipped') { %>
+                        <span class="skipped-color">
+                      <% } else if (scenarios[sn].executions[i].steps[stepIndex]['status']=='passed') { %>
+                        <span class="passed-color">
+                      <% } %>
+                      <%= scenarios[sn].executions[i].steps[stepIndex]['status'] %>
+                      </span>
+                  </td>
+                  <td>
+                    <% if (scenarios[sn].executions[i].steps[stepIndex]['status']!=='skipped') { %>
+                      <%= (scenarios[sn].executions[i].steps[stepIndex]['duration'] / 100000).toFixed(3) %> ms.
+                      <i>
+                      <%= (scenarios[sn].executions[i].steps[stepIndex]['duration'] / 100000000).toFixed(3) %> s.
+                      </i>
+                    <% } %>
+                  </td>
+                </tr>
+              <tr>
+                  <% if (scenarios[sn].executions[i].steps[stepIndex]['error'] !== '') { %>
+                    <td colspan="4">
+                      <details>
+                        <summary>
+                          <p style="font-size: 11px; display: inline">Error ⤵</p>
+                        </summary>
+                        <pre><%= scenarios[sn].executions[i].steps[stepIndex]['error'] %></pre>
+                      </details>
+                    </td>
+                  <% } %>
+                </tr>
               <% } %>
-            </tr>
-          <% } %>
-        </table>
-      </details>
+            </table>        
+          </div>
+          </details>
+        <% } %>
+    </details>
   <% } %>
 
 </body>

@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A report generator cucumber_report.json files which creates a report with historic runs for each scenario name.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "npm run report"
+    "test": "npm run report",
+    "test:generate": "node test_main.js"
   },
   "keywords": [
     "cucumber",
