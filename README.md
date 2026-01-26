@@ -6,20 +6,33 @@ It expects report files following cucumber standard version ???
 
 ## How to run
 
-### Option 1 using as a library
+### Option 1. Using as a library
 
 Include the generator to your file:
 
 ```js
-import { generateHtml } from 'package-name';
+// import the package
+const { generateHtml: historicCucumberReportGenerateHtml } = require('cucumber-report-historic-scenarios');
 
-// In order to generate reports, only need to call generateHtml passing arguments
 
-generateHtml(reportsPath, outputFile, templateFile, maxRecent);
-// TODO: complete
+function main(){
+    // make sure to change this as required
+    const reportsPath = '/tmp/reports/historic';
+    const outputFile = './historic-reports-by-scenario.html';
+    const templateFile = './node_modules/cucumber-report-historic-scenarios/resources/historic_cucumber_report_template.ejs'; // this points to the package's template, you could copy or modify if needed
+    const maxRecent = 12;
+
+    // will do the whole reading and generation, will save an html file.
+    historicCucumberReportGenerateHtml(reportsPath, outputFile, templateFile, maxRecent);
+}
+
+main();
+
 ```
 
 ### Option 2 using cli
+
+In package root's directory:
 
 1. Gather reports: You need to prepare several `cucumber_report.json` files, you should rename them according to its creation date and time using format *ISO Timestamp*. For instance `cucumber-report-2025-11-06T22-02-37-741Z.json, cucumber-report-2025-12-09T03-26-17-997Z.json, ...`
 
