@@ -2,7 +2,9 @@
 
 Using cucumber_report.json files, generates an HTML report for historic execution for **each test scenario**. 
 
-It expects report files following cucumber standard version ???
+It expects report files compatible with cucumber, this was tested with:  "@cucumber/cucumber": "11.3.0" but it should work with earlier versions.
+
+Install with: `npm install cucumber-report-historic-scenarios`
 
 ## How to run
 
@@ -27,7 +29,6 @@ function main(){
 }
 
 main();
-
 ```
 
 ### Option 2 using cli

@@ -1,6 +1,6 @@
 {
   "name": "cucumber-report-historic-scenarios",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A report generator that read cucumber_report.json files and creates a report with historic runs for each scenario name.",
   "main": "index.js",
   "type": "module",
