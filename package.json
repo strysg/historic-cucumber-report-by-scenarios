@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "npm run report",
-    "test:generate": "node test_main.js"
+    "test:cli": "node test_cli.js"
   },
   "keywords": [
     "cucumber",

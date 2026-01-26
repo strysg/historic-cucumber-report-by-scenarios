@@ -25,7 +25,9 @@ function generateHtml(reportsPath = './reports',
 
     const reports = [];
     const dateTimeOfFiles = [];
-    for (const reportFile of reportFiles) {
+
+    for (let i = 0; i < reportFiles.length && i <= maxRecentFiles; i++) {
+        const reportFile = reportFiles[i];
         const scenarioReport = getScenariosFromReportJson(path.join(reportsPath, reportFile));
         reports.push(scenarioReport);
         dateTimeOfFiles.push(getFileDateFromName(reportFile));
@@ -41,7 +43,7 @@ function generateHtml(reportsPath = './reports',
     const dataToEjs = {
         date: DateTime.now().toUTC().toISO(),
         summary: {
-            totalFiles: reportFiles.length,
+            totalFiles: maxRecentFiles !== 0 ? maxRecentFiles : Object.keys(groupedScenarios).length,
             totalScenarios: Object.keys(groupedScenarios).length,
             minReportDate: dateTimeOfFiles.sort((a, b) => a - b)[0],
             maxReportDate: dateTimeOfFiles.sort((a, b) => a - b)[dateTimeOfFiles.length - 1]
