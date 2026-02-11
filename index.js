@@ -29,6 +29,7 @@ function generateHtml(reportsPath = './reports',
     for (let i = 0; i < reportFiles.length && i <= maxRecentFiles; i++) {
         const reportFile = reportFiles[i];
         const scenarioReport = getScenariosFromReportJson(path.join(reportsPath, reportFile));
+        if (scenarioReport === null) continue;
         reports.push(scenarioReport);
         dateTimeOfFiles.push(getFileDateFromName(reportFile));
     }
@@ -51,8 +52,6 @@ function generateHtml(reportsPath = './reports',
         rs,
         scenarios: groupedScenarios
     };
-
-    console.log(dataToEjs);
 
     // reading ejs template
     const htmlTemplate = readFileSync(templateFile);
