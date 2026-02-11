@@ -28,8 +28,13 @@ function generateHtml(reportsPath = './reports',
 
     for (let i = 0; i < reportFiles.length && i <= maxRecentFiles; i++) {
         const reportFile = reportFiles[i];
-        const scenarioReport = getScenariosFromReportJson(path.join(reportsPath, reportFile));
-        if (scenarioReport === null) continue;
+        const reportPath = path.join(reportsPath, reportFile);
+        const scenarioReport = getScenariosFromReportJson(reportPath);
+        if (scenarioReport === null) {
+            console.error(`ˣ file not proccesed: ${reportFile}`);
+            continue;
+        }
+        console.log(`✓ proccesed file: ${reportPath}`);
         reports.push(scenarioReport);
         dateTimeOfFiles.push(getFileDateFromName(reportFile));
     }
@@ -44,7 +49,7 @@ function generateHtml(reportsPath = './reports',
     const dataToEjs = {
         date: DateTime.now().toUTC().toISO(),
         summary: {
-            totalFiles: maxRecentFiles !== 0 ? maxRecentFiles : Object.keys(groupedScenarios).length,
+            totalFiles: reports.length,
             totalScenarios: Object.keys(groupedScenarios).length,
             minReportDate: dateTimeOfFiles.sort((a, b) => a - b)[0],
             maxReportDate: dateTimeOfFiles.sort((a, b) => a - b)[dateTimeOfFiles.length - 1]
